@@ -74,6 +74,8 @@ window.bushosData = [
     "country": "秦国",
     "url": "#",
     "imgs": [
+      "images/007lg.jpg",
+      "images/007ur.jpg",
       "images/007sr.jpg",
       "images/007r.jpg"
     ]
