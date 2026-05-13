@@ -12,94 +12,80 @@ body {
     background-color: var(--bg-main);
     color: white;
     margin: 0;
-    padding: 20px 0;
-    font-family: sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* 画面幅が狭いときに左側が切れるのを防ぐ最重要設定 */
-    min-width: min-content;
+    padding: 30px 0;
+    font-family: sans-serif;
 }
 
-#app-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-    /* 横スクロールを許可 */
-    overflow-x: auto;
-    padding: 20px;
-    box-sizing: border-box;
-    /* iOSでのスクロールを滑らかに */
-    -webkit-overflow-scrolling: touch;
-}
-
-#capture-area {
-    background-color: rgba(0,0,0,0.5);
-    border: 3px solid var(--border-gold);
-    padding: 15px;
-    /* 画面が狭くても中身を維持する */
-    flex-shrink: 0;
-    width: fit-content;
-}
-
-.formation-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    gap: 10px;
-    width: 1040px; /* シミュレーターの基準幅 */
-}
-
-/* ヘッダー内の各要素 */
+#app-wrapper { display: flex; align-items: center; gap: 20px; width: fit-content; }
+.nav-btn { background: none; border: none; color: var(--accent-orange); font-size: 5rem; cursor: pointer; }
+#capture-area { background-color: rgba(0,0,0,0.5); border: 3px solid var(--border-gold); padding: 20px; width: fit-content; }
+.formation-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; width: 1040px; }
 .header-left, .header-right { flex: 1; display: flex; }
+
 .limit-container {
     display: grid; grid-template-columns: auto 1fr; align-items: center; background: #333;
-    border: 1px solid var(--border-gold); padding-left: 10px; width: 100%; height: 45px;
+    border: 1px solid var(--border-gold); padding-left: 10px; width: 100%; height: 45px; box-sizing: border-box; overflow: hidden;
 }
 .limit-label { font-weight: bold; font-size: 0.85rem; color: var(--border-gold); white-space: nowrap; margin-right: 5px; }
-.limit-select { width: 100%; border: none; color: white; background: transparent; font-weight: bold; cursor: pointer; height: 100%; outline: none; }
+.limit-select { width: 100%; border: none; color: white; padding: 0 5px; font-weight: bold; cursor: pointer; outline: none; height: 100%; }
 
 #formation-name {
     background: rgba(0,0,0,0.8); border: 1px solid var(--border-gold); color: white;
-    font-size: 1.1rem; text-align: center; width: 100%; height: 45px;
+    font-size: 1.1rem; text-align: center; width: 100%; height: 45px; box-sizing: border-box;
 }
-
+#page-indicator { width: 80px; text-align: right; font-size: 0.8rem; color: var(--border-gold); }
 .formation-grid { display: flex; gap: 10px; align-items: flex-start; }
 .unit-column { width: 140px; display: flex; flex-direction: column; gap: 6px; }
+.column-label { border: 1px solid var(--border-gold); text-align: center; font-size: 0.85rem; font-weight: bold; padding: 6px 0; }
+.label-soudaisho { background-color: var(--bg-soudaisho); color: var(--text-soudaisho); }
+.label-army { background-color: var(--bg-army); color: var(--text-army); }
+.label-gunshi { background-color: var(--bg-gunshi); color: var(--text-gunshi); }
 
-/* スロットのレスポンシブ対応 */
 .slot {
     width: 100%; aspect-ratio: 313 / 440; background-color: var(--bg-slot); border: 1px solid var(--border-gold);
     display: flex; justify-content: center; align-items: center; cursor: pointer; overflow: hidden; position: relative;
 }
 .slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.plus-mark { font-size: 2.5rem; color: var(--border-gold); opacity: 0.4; }
 
-/* 下部コントロール */
-.bottom-controls { 
-    margin: 30px 0; 
-    display: flex; 
-    gap: 15px; 
-    width: 90%; 
-    max-width: 1000px; 
-    justify-content: center;
+.extra-settings {
+    background: rgba(0,0,0,0.4); border: 1px solid var(--border-gold); padding: 6px;
+    min-height: 110px; display: flex; flex-direction: column; gap: 5px;
 }
-.ctrl-btn { flex: 1; padding: 15px; font-size: 1rem; font-weight: bold; cursor: pointer; border: 2px solid var(--border-gold); border-radius: 8px; color: white; }
+.config-row { display: flex; flex-direction: column; gap: 2px; }
+.config-label { font-size: 0.7rem; color: var(--border-gold); }
+.config-select { border: none; font-size: 0.8rem; padding: 3px; cursor: pointer; color: white; width: 100%; }
+.memo-input { background: rgba(255,255,255,0.08); border: 1px solid #777; color: white; font-size: 0.85rem; width: 100%; box-sizing: border-box; height: 50px; resize: none; }
 
-/* 注意書きセクションのレスポンシブ化 */
-.info-section { 
-    width: 95%; 
-    max-width: 1000px; 
-    margin-top: 20px; 
-    padding: 15px;
-    box-sizing: border-box;
-}
-.info-container { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; font-size: 0.85rem; line-height: 1.6; color: #ccc; }
+.bottom-controls { margin: 30px 0; display: flex; gap: 20px; width: 1000px; justify-content: center; }
+.ctrl-btn { flex: 1; padding: 18px; font-size: 1.2rem; font-weight: bold; cursor: pointer; border: 2px solid var(--border-gold); border-radius: 8px; color: white; transition: 0.2s; }
+.copy-btn { background-color: #2E7D32; }
+.reset-btn { background-color: #888; }
+.paste-btn { background-color: #E65100; }
+.cancel-btn { background-color: #C62828; }
 
-/* スマホ向けの微調整 */
-@media screen and (max-width: 768px) {
-    .nav-btn { font-size: 3rem; }
-    .bottom-controls { flex-direction: column; width: 300px; }
-}
+.info-section { width: 1000px; margin-top: 20px; border-top: 1px solid rgba(181, 145, 83, 0.3); padding-top: 20px; color: #ccc; font-size: 0.85rem; line-height: 1.6; }
+.info-container { background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; }
+.info-container h3 { color: var(--border-gold); margin-top: 0; border-bottom: 1px solid var(--border-gold); display: inline-block; padding-bottom: 5px; margin-bottom: 20px; }
+.info-block { margin-bottom: 20px; }
+.info-block h4 { margin: 0 0 10px 0; color: #eee; font-size: 0.95rem; }
+.info-block ul, .info-block ol { margin: 0; padding-left: 20px; }
+.info-block li { margin-bottom: 8px; }
+.info-block.contact { border-top: 1px dashed #555; padding-top: 15px; text-align: center; font-weight: bold; }
+.info-block a { color: var(--accent-orange); text-decoration: none; }
+.info-block a:hover { text-decoration: underline; }
+
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
+.modal-content { background: var(--bg-main); border: 3px solid var(--border-gold); margin: 2% auto; padding: 20px; width: 650px; max-height: 90vh; display: flex; flex-direction: column; }
+.scroll-area { overflow-y: auto; flex-grow: 1; }
+.image-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+.image-item { width: 100%; aspect-ratio: 313/440; border: 1px solid var(--border-gold); cursor: pointer; object-fit: cover; }
+.search-box { width: 100%; padding: 12px; margin-bottom: 15px; background: #111; border: 1px solid var(--border-gold); color: #fff; box-sizing: border-box; }
+.choice-btn { width: 100%; padding: 15px; margin: 5px 0; background: var(--bg-slot); border: 1px solid var(--border-gold); color: white; text-align: left; cursor: pointer; }
+.menu-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 2000; }
+.menu-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 20px; border-radius: 12px; width: 300px; z-index: 2001; text-align: center; color: #333; }
+.menu-button { display: block; width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; }
+.close-btn { background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
