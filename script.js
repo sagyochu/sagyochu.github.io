@@ -1,5 +1,5 @@
 /**
- * script.js - v13.7
+ * script.js - v13.7 (Modified for Navigation Fix)
  */
 
 const units = [
@@ -192,7 +192,6 @@ function handleMenuSelection(action) {
             updateUI(); saveToStorage(); 
             break;
         case 'detail': 
-            // 修正：動的URL生成 (https://kinran.work.gd/k/国名/武将名)
             const detailUrl = `https://kinran.work.gd/k/${currentBusho.country}/${currentBusho.name}`;
             window.open(detailUrl, '_blank'); 
             break;
@@ -200,8 +199,78 @@ function handleMenuSelection(action) {
 }
 
 function closeMenu() { $('#menu-overlay, #menu-modal').fadeOut(200); }
-function openPopup() { document.getElementById('modal').style.display = "block"; document.getElementById('busho-search').value = ""; renderCountryList(); }
+function openPopup() { 
+    document.getElementById('modal').style.display = "block"; 
+    document.getElementById('busho-search').value = ""; 
+    // 初期状態は常に国別を表示（タブのスタイルも国別に合わせる）
+    switchTab('country');
+}
 function closePopup() { document.getElementById('modal').style.display = "none"; }
+
+// タブ切り替えロジック
+function switchTab(type) {
+    const btnCountry = document.getElementById('tab-country');
+    const btnBelongs = document.getElementById('tab-belongs');
+    
+    // 検索窓をリセット
+    document.getElementById('busho-search').value = "";
+
+    if (type === 'country') {
+        btnCountry.style.background = "#444";
+        btnCountry.style.border = "1px solid var(--border-gold)";
+        btnBelongs.style.background = "#222";
+        btnBelongs.style.border = "1px solid #666";
+        renderCountryList(); 
+    } else {
+        btnBelongs.style.background = "#444";
+        btnBelongs.style.border = "1px solid var(--border-gold)";
+        btnCountry.style.background = "#222";
+        btnCountry.style.border = "1px solid #666";
+        renderBelongsList();
+    }
+}
+
+// 所属一覧を表示する
+function renderBelongsList() {
+    const body = document.getElementById('modal-body');
+    body.innerHTML = '';
+    
+    const grid = document.createElement('div');
+    grid.style.display = "grid";
+    grid.style.gridTemplateColumns = "1fr 1fr";
+    grid.style.gap = "5px";
+
+    if (typeof belongsMap !== 'undefined') {
+        Object.keys(belongsMap).forEach(group => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.style.margin = "0";
+            btn.innerHTML = `${group} <span style="font-size:0.8em; opacity:0.7;">(${belongsMap[group].length})</span>`;
+            btn.onclick = () => renderBushoListByBelongs(group);
+            grid.appendChild(btn);
+        });
+    }
+    body.appendChild(grid);
+}
+
+// 所属内の武将一覧を表示する
+function renderBushoListByBelongs(groupName) {
+    const body = document.getElementById('modal-body');
+    body.innerHTML = `
+        <button class="choice-btn" style="background:#555; margin-bottom:10px;" onclick="renderBelongsList()">
+            ← 所属一覧に戻る
+        </button>`;
+    
+    const filtered = window.bushosData.filter(b => b.belongs && b.belongs.includes(groupName));
+    filtered.forEach(b => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerText = b.name;
+        // 所属名を引数として渡す
+        btn.onclick = () => renderImageList(b, groupName); 
+        body.appendChild(btn);
+    });
+}
 
 function renderCountryList() {
     const body = document.getElementById('modal-body');
@@ -228,9 +297,26 @@ function renderBushoList(country) {
     });
 }
 
-function renderImageList(busho) {
+// 画像一覧を表示する（修正箇所：originGroupを受け取る）
+function renderImageList(busho, originGroup = null) {
     const body = document.getElementById('modal-body');
-    body.innerHTML = `<h3>${busho.name}</h3><button class="choice-btn" style="background:#444;" onclick="renderBushoList('${lastSelectedCountry}')">← 武将選択に戻る</button>`;
+    
+    // 戻るボタンの分岐ロジック
+    const backBtn = document.createElement('button');
+    backBtn.className = 'choice-btn';
+    backBtn.style.background = "#444";
+    backBtn.innerText = "← 武将選択に戻る";
+    backBtn.onclick = () => {
+        if (originGroup) {
+            renderBushoListByBelongs(originGroup);
+        } else {
+            renderBushoList(busho.country || lastSelectedCountry);
+        }
+    };
+
+    body.innerHTML = `<h3>${busho.name}</h3>`;
+    body.appendChild(backBtn);
+
     const grid = document.createElement('div');
     grid.className = 'image-grid';
     busho.imgs.forEach(src => {
@@ -248,7 +334,12 @@ function renderImageList(busho) {
 
 function filterBushos() {
     const q = document.getElementById('busho-search').value.trim();
-    if (!q) { renderCountryList(); return; }
+    if (!q) { 
+        // 検索が空になったら現在のタブに合わせてリストを戻す
+        const isBelongsActive = document.getElementById('tab-belongs').style.background === "rgb(68, 68, 68)";
+        if (isBelongsActive) renderBelongsList(); else renderCountryList();
+        return; 
+    }
     const body = document.getElementById('modal-body');
     body.innerHTML = "";
     bushoData.filter(b => b.name.includes(q) || (b.kana && b.kana.includes(q))).forEach(b => {
