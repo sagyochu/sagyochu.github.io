@@ -1061,6 +1061,16 @@ window.bushosData = [
     ]
   },
   {
+    "name": "有義",
+    "kana":"ゆうぎ",
+    "country": "秦国",
+    "url": "#",
+    "imgs": [
+      "images/000ur.jpg",
+      "images/000sr.jpg"
+    ]
+  },
+  {
     "name": "李牧",
     "kana":"りぼく",
     "country": "趙国",
